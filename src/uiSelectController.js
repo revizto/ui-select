@@ -443,14 +443,15 @@ uis.controller('uiSelectCtrl',
             ctrl.close(skipFocusser);
             return;
           }
+        } else if ( typeof item === 'string' ) {
+            item = _replaceTaggingLabelAndTrim(item, ctrl.taggingLabel);
         }
+
         _resetSearchInput();
         $scope.$broadcast('uis:select', item);
 
         if (ctrl.closeOnSelect) {
           ctrl.close(skipFocusser);
-        } else if ( typeof item === 'string' ) {
-          item = _replaceTaggingLabelAndTrim(item, ctrl.taggingLabel);
         }
       }
     }
