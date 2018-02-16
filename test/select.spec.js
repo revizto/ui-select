@@ -161,6 +161,7 @@ describe('ui-select tests', function () {
       if (attrs.theme !== undefined) { attrsHtml += ' theme="' + attrs.theme + '"'; }
       if (attrs.tabindex !== undefined) { attrsHtml += ' tabindex="' + attrs.tabindex + '"'; }
       if (attrs.tagging !== undefined) { attrsHtml += ' tagging="' + attrs.tagging + '"'; }
+      if (attrs.taggingLabel !== undefined) { attrsHtml += ' tagging-label="' + attrs.taggingLabel + '"'; }
       if (attrs.taggingTokens !== undefined) { attrsHtml += ' tagging-tokens="' + attrs.taggingTokens + '"'; }
       if (attrs.title !== undefined) { attrsHtml += ' title="' + attrs.title + '"'; }
       if (attrs.appendToBody !== undefined) { attrsHtml += ' append-to-body="' + attrs.appendToBody + '"'; }
@@ -678,6 +679,15 @@ describe('ui-select tests', function () {
     clickMatch(el);
 
     $(el).scope().$select.select("I don't exist");
+
+    expect($(el).scope().$select.selected).toEqual("I don't exist");
+  });
+
+  it('should not include tagging label if the selection is clicked', function () {
+    var el = createUiSelect({tagging: true, taggingLabel: ' (default)'});
+    clickMatch(el);
+
+    $(el).scope().$select.select("I don't exist (default)", undefined, { type: 'click' });
 
     expect($(el).scope().$select.selected).toEqual("I don't exist");
   });
@@ -2730,6 +2740,17 @@ describe('ui-select tests', function () {
       expect(el.scope().$select.items[1]).toEqual(jasmine.objectContaining({ name: 'Amalie', email: 'amalie@email.com' }));
     });
 
+
+    it('should not include tagging label if the selection is clicked', function () {
+      var el = createUiSelectMultiple({tagging: true, taggingLabel: ' (default)'});
+      clickMatch(el);
+
+      $(el).scope().$select.select("I don't exist (default)", undefined, { type: 'click' });
+      $(el).scope().$select.select("I also don't exist (default)", undefined, { type: 'click' });
+
+      expect($(el).scope().$select.selected[0]).toEqual("I don't exist");
+      expect($(el).scope().$select.selected[1]).toEqual("I also don't exist");
+    });
 
     it('should have tolerance for undefined values', function () {
 
