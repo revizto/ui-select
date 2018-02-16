@@ -388,6 +388,9 @@ uis.controller('uiSelectCtrl',
     return isDisabled;
   };
 
+  function _replaceTaggingLabelAndTrim(item, taggingLabel) {
+    return item.replace(taggingLabel, '').trim();
+  }
 
   // When the user selects an item with ENTER or clicks the dropdown
   ctrl.select = function(item, skipFocusser, $event) {
@@ -431,7 +434,7 @@ uis.controller('uiSelectCtrl',
               // if item type is 'string', apply the tagging label
               } else if ( typeof item === 'string' ) {
                 // trim the trailing space
-                item = item.replace(ctrl.taggingLabel,'').trim();
+                  item = _replaceTaggingLabelAndTrim(item, ctrl.taggingLabel);
               }
             }
           }
@@ -446,6 +449,8 @@ uis.controller('uiSelectCtrl',
 
         if (ctrl.closeOnSelect) {
           ctrl.close(skipFocusser);
+        } else if ( typeof item === 'string' ) {
+          item = _replaceTaggingLabelAndTrim(item, ctrl.taggingLabel);
         }
       }
     }
