@@ -6,7 +6,7 @@
  */
 
 
-(function () { 
+(function () {
 "use strict";
 var KEY = {
     TAB: 9,
@@ -965,11 +965,16 @@ uis.controller('uiSelectCtrl',
       // If tagging try to split by tokens and add items
       if (ctrl.taggingTokens.isActivated) {
         var items = [];
-        for (var i = 0; i < ctrl.taggingTokens.tokens.length; i++) {  // split by first token that is contained in data
+        for (var i = 0; i < ctrl.taggingTokens.tokens.length; i++) {  // split by all token that is contained in data
           var separator = KEY.toSeparator(ctrl.taggingTokens.tokens[i]) || ctrl.taggingTokens.tokens[i];
           if (data.indexOf(separator) > -1) {
-            items = data.split(separator);
-            break;  // only split by one token
+            if (items.length < 1) {
+              items = data.split(separator);
+            } else {
+              items = items.reduce(function(accumulator, currentValue){
+                return accumulator.concat(currentValue.split(separator))
+              }, []);
+            }
           }
         }
         if (items.length === 0) {
@@ -1622,7 +1627,7 @@ uis.directive('uiSelectMatch', ['uiSelectConfig', function(uiSelectConfig) {
       var theme = getAttribute(parent, 'theme') || uiSelectConfig.theme;
       var multi = angular.isDefined(getAttribute(parent, 'multiple'));
 
-      return theme + (multi ? '/match-multiple.tpl.html' : '/match.tpl.html');      
+      return theme + (multi ? '/match-multiple.tpl.html' : '/match.tpl.html');
     },
     link: function(scope, element, attrs, $select) {
       $select.lockChoiceExpression = attrs.uiLockChoice;
@@ -2121,7 +2126,7 @@ uis.directive('uiSelectNoChoice',
             templateUrl: function (tElement) {
                 // Needed so the uiSelect can detect the transcluded content
                 tElement.addClass('ui-select-no-choice');
-      
+
                 // Gets theme attribute from parent (ui-select)
                 var theme = tElement.parent().attr('theme') || uiSelectConfig.theme;
                 return theme + '/no-choice.tpl.html';
@@ -2513,12 +2518,12 @@ uis.service('uisRepeatParser', ['uiSelectMinErr','$parse', function(uiSelectMinE
       throw uiSelectMinErr('iexp', "Expected expression in form of '_item_ in _collection_[ track by _id_]' but got '{0}'.",
               expression);
     }
-    
-    var source = match[5], 
+
+    var source = match[5],
         filters = '';
 
     // When using (key,value) ui-select requires filters to be extracted, since the object
-    // is converted to an array for $select.items 
+    // is converted to an array for $select.items
     // (in which case the filters need to be reapplied)
     if (match[3]) {
       // Remove any enclosing parenthesis
@@ -2528,7 +2533,7 @@ uis.service('uisRepeatParser', ['uiSelectMinErr','$parse', function(uiSelectMinE
       if(filterMatch && filterMatch[1].trim()) {
         filters = filterMatch[1];
         source = source.replace(filters, '');
-      }      
+      }
     }
 
     return {
@@ -2544,7 +2549,7 @@ uis.service('uisRepeatParser', ['uiSelectMinErr','$parse', function(uiSelectMinE
           expression += ' track by ' + this.trackByExp;
         }
         return expression;
-      } 
+      }
     };
 
   };
