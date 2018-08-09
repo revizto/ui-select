@@ -688,11 +688,16 @@ uis.controller('uiSelectCtrl',
       // If tagging try to split by tokens and add items
       if (ctrl.taggingTokens.isActivated) {
         var items = [];
-        for (var i = 0; i < ctrl.taggingTokens.tokens.length; i++) {  // split by first token that is contained in data
+        for (var i = 0; i < ctrl.taggingTokens.tokens.length; i++) {  // split by all token that is contained in data
           var separator = KEY.toSeparator(ctrl.taggingTokens.tokens[i]) || ctrl.taggingTokens.tokens[i];
           if (data.indexOf(separator) > -1) {
-            items = data.split(separator);
-            break;  // only split by one token
+            if (items.length < 1) {
+              items = data.split(separator);
+            } else {
+              items = items.reduce(function(accumulator, currentValue){
+                return accumulator.concat(currentValue.split(separator))
+              }, []);
+            }
           }
         }
         if (items.length === 0) {
